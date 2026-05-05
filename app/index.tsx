@@ -9,15 +9,15 @@ export default function App() {
 
   const [fontsLoaded] = useFonts({
   'Afacad-Regular': require('../assets/Fonts/Afacad-Regular.ttf'),
-  'NataSans-Bold': require('../assets/Fonts/NataSans-Bold.ttf'),
-  'NataSans-SemiBold': require('../assets/Fonts/NataSans-SemiBold.ttf'),
+  // 'NataSans-Bold': require('../assets/Fonts/NataSans-Bold.ttf'),
+  // 'NataSans-SemiBold': require('../assets/Fonts/NataSans-SemiBold.ttf'),  
 });
 if (!fontsLoaded) return null; 
 
   return (
    <TouchableOpacity
    style={{ flex: 1 }}
-   onPress={() => router.push('/login')} 
+   onPress={() => router.push('/login')} //router.replace('/login') to prevent going back to the splash screen
    activeOpacity={1}>
 
     <LinearGradient
@@ -70,3 +70,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
+
+// import { useEffect } from 'react';
+
+// useEffect(() => {
+//   const timer = setTimeout(() => {
+//     router.replace('/login');
+//   }, 2000);
+
+//   return () => clearTimeout(timer);
+// }, []); later if you want to automatically navigate to the login screen after a delay (e.g., 2 seconds) without user interaction.
