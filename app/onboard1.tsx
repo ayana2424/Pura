@@ -10,8 +10,35 @@ export default function Onboard1() {
   const [fontsLoaded] = useFonts({
   'NataSans-Bold': require('../assets/Fonts/NataSans-Bold.ttf'),
 });
-if (!fontsLoaded) return null;
 const [selected, setSelected] = useState('');
+const [currentQuestion, setCurrentQuestion] = useState(0);
+const [answers, setAnswers] = useState<string[]>([]); // saves all answers
+const questions = [
+  {
+    question: 'Where do you grow your plants?',
+    options: ['Balcony or Patio', 'Backyard Garden', 'Indoors or Windowsill'],
+  },
+  {
+    question: 'How much experience do you have?',
+    options: ['Complete beginner', 'Some experience', "I know what I'm doing"],
+  },
+  {
+    question: 'How often do you want reminders?',
+    options: ['Every day', 'Every few days', 'Once a week'],
+  },
+];
+const handleNext = () => {
+  setAnswers([...answers, selected]); // save the answer
+  setSelected('');                    // reset selection
+
+  if (currentQuestion < questions.length - 1) {
+    setCurrentQuestion(currentQuestion + 1); // go to next question
+  } else {
+    router.push('/home'); // last question → go to home
+  }
+};
+if (!fontsLoaded) return null;
+
 
 return (
      <LinearGradient
@@ -39,10 +66,10 @@ return (
              color: '#595512',
              fontSize: 24, 
             }]}
-             >Where do you grow your plants?
+             >{questions[currentQuestion].question}
         </Text>
 
-        {options.map((option) => (
+        {questions[currentQuestion].options.map((option) => (
           <TouchableOpacity
             key={option}
             style={[styles.option, selected === option && styles.optionSelected]}
@@ -56,19 +83,24 @@ return (
 
         {/* dots */}
         <View style={styles.dots}>
-          <View style={[styles.dot, styles.dotActive]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
-        </View>
+  {questions.map((_, index) => (
+    <View
+      key={index}
+      style={[styles.dot, index === currentQuestion && styles.dotActive]}
+    />
+  ))}
+</View>
       </View>
 
       {/* go to next question when answer is selected */}
       <TouchableOpacity
         style={[styles.next, !selected && styles.nextDisabled]}
         disabled={!selected}
-        onPress={() => router.push('/onboard2')}
+        onPress={handleNext}
       >
-        <Text style={styles.nextText}>Next</Text>
+        <Text style={styles.nextText}>
+          {currentQuestion === questions.length - 1 ? 'Finish' : 'Next'}
+        </Text>
       </TouchableOpacity>
 
     </View>
