@@ -1,17 +1,28 @@
+import { typography } from '@/components/styles';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 
-export default function App() {
+export default function Index() {
   
 
   const [fontsLoaded] = useFonts({
   'Afacad-Regular': require('../assets/Fonts/Afacad-Regular.ttf'),
   // 'NataSans-Bold': require('../assets/Fonts/NataSans-Bold.ttf'),
   // 'NataSans-SemiBold': require('../assets/Fonts/NataSans-SemiBold.ttf'),  
+  
 });
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    router.replace('/login');
+  }, 5000);
+
+  return () => clearTimeout(timer);
+}, []);
+
 if (!fontsLoaded) return null; 
 
   return (
@@ -51,7 +62,7 @@ if (!fontsLoaded) return null;
       style={{ width: 150, height: 200 }}
     />
     
-      <Text style={{ fontFamily: 'Afacad-Regular', fontSize: 48 , color: '#439D82' }}>pura</Text>
+      <Text style={[typography.heading1, { color: '#439D82' }]}>pura</Text> 
       
     </LinearGradient>
     </TouchableOpacity>
@@ -70,13 +81,3 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
-
-// import { useEffect } from 'react';
-
-// useEffect(() => {
-//   const timer = setTimeout(() => {
-//     router.replace('/login');
-//   }, 2000);
-
-//   return () => clearTimeout(timer);
-// }, []); later if you want to automatically navigate to the login screen after a delay (e.g., 2 seconds) without user interaction.

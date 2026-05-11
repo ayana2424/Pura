@@ -117,7 +117,7 @@ export default function Login() {
                 !canLogin && styles.loginButtonDisabled,
                 pressed && canLogin && styles.loginButtonPressed,
               ]}
-              onPress={() => router.push('/onboard1')}
+              onPress={() => router.push('/onboard')}
               disabled={!canLogin}
             >
               <Text style={[styles.loginButtonText, { fontFamily: 'NataSans-SemiBold' }]}>

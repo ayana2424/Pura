@@ -3,16 +3,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 export default function Signup() {
@@ -193,7 +193,7 @@ export default function Signup() {
                 !canSignUp && styles.signupButtonDisabled,
                 pressed && canSignUp && styles.signupButtonPressed,
               ]}
-              onPress={() => router.push('/onboard1')}
+              onPress={() => router.push('/onboard')}
               disabled={!canSignUp}
             >
               <Text style={[styles.signupButtonText, { fontFamily: 'NataSans-SemiBold' }]}>
