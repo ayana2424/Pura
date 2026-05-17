@@ -1,6 +1,6 @@
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { useState } from 'react';
 import {
   Image,
@@ -36,6 +36,8 @@ export default function Login() {
       colors={['#61BDFB', '#E5F4FF', '#BACC72']}
       style={styles.gradient}
     >
+            <Stack.Screen options={{ headerShown: false }} />
+
       {/* Cloud background image */}
       <Image
         source={require('../assets/cloud.png')}

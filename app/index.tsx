@@ -1,8 +1,8 @@
 import { typography } from '@/components/styles';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
 import { useEffect } from 'react';
+import { router, Stack } from 'expo-router';
 import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 
@@ -37,6 +37,8 @@ if (!fontsLoaded) return null;
       // end={{ x: 1, y: 1 }} // in case if you want to change position of the gradient
       style={styles.container}
     >
+            <Stack.Screen options={{ headerShown: false }} />
+
       <Image
     source={require('../assets/cloud.png')}
     style={{ 
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    color: '#439D82', // text color
+    color: '#439D82',
     fontSize: 24,
   },
 });
