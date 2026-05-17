@@ -69,8 +69,8 @@ export default function ZoneCarousel() {
                   <Text style={[typography.heading4, { color: '#595512' }]}>{item.soilMoisture}%</Text>
                 </View>
                 <View>
-                  <Text style={[typography.body, { color: '#9A9982', fontWeight: '600' }]}>Temperature</Text>
-                  <Text style={[typography.heading4, { color: '#595512' }]}>{item.temperature}°C</Text>
+                  <Text style={[typography.body, { color: '#9A9982', fontWeight: '600' }]}>Last Watered</Text>
+                  <Text style={[typography.heading4, { color: '#595512' }]}>{item.temperature}mins</Text>
                 </View>
               </View>
             </View>

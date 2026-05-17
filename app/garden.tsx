@@ -1,5 +1,5 @@
 // app/garden.tsx
-
+import GradientBackground from "@/components/GradientBackground";
 import { cards, typography } from "@/components/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useRouter } from "expo-router";
@@ -16,58 +16,34 @@ import {
   View,
 } from "react-native";
 
-
 const zones = [
-  {
-    id: "1",
-    name: "Zone A",
-    plant: "Tomatoes",
-    image: require("../assets/images/tomato.png"),
-  },
-  {
-    id: "2",
-    name: "Zone B",
-    plant: "Carrots",
-    image: require("../assets/images/carrot.png"),
-  },
-  {
-    id: "3",
-    name: "Zone C",
-    plant: "Potatoes",
-    image: require("../assets/images/potato.png"),
-  },
-  {
-    id: "4",
-    name: "Zone D",
-    plant: "Lemons",
-    image: require("../assets/images/lemon.png"),
-  },
+  { id: "1", name: "Zone A", plant: "Yellow Cosmos", image: require("../assets/images/yellowCosmos.png") },
+  { id: "2", name: "Zone B", plant: "French Marigolds",  image: require("../assets/images/frenchMarigolds.png") },
+  { id: "3", name: "Zone C", plant: "Dwarf Sunflowers", image: require("../assets/images/dwarfSun.png") },
+  { id: "4", name: "Zone D", plant: "Violas",   image: require("../assets/images/violas.png") },
 ];
+
 export default function Garden() {
   const [search, setSearch] = useState("");
   const { width } = useWindowDimensions();
-  const cardSize = (width - 90) / 2; // 2 columns with padding
+  const cardSize = (width - 90) / 2;
   const router = useRouter();
 
   const filtered = zones.filter(
     (z) =>
       z.plant.toLowerCase().includes(search.toLowerCase()) ||
-      z.name.toLowerCase().includes(search.toLowerCase()),
+      z.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={[styles.container]}>
+    // No weatherType prop needed — GradientBackground reads context itself
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+      <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
-
-        {/* Header */}
-        <Text
-          style={[typography.heading2, { color: "#fff", marginBottom: 16 }]}
-        >
+        <Text style={[typography.heading2, { color: "#fff", marginBottom: 16 }]}>
           My Garden
         </Text>
 
-        {/* Search Bar */}
         <LinearGradient
           colors={["rgba(138, 200, 242, 0.28)", "rgba(206, 219, 227, 0.62)"]}
           start={{ x: 0, y: 0 }}
@@ -84,66 +60,38 @@ export default function Garden() {
           <SearchNormal1 size={20} color="#ffffff" />
         </LinearGradient>
 
-        {/* Grid */}
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.grid}>
-            {/* Add New Zone Card */}
-            <TouchableOpacity
-              style={[
-                styles.card,
-                styles.addCard,
-                { width: cardSize, height: cardSize },
-              ]}
-            >
+            <TouchableOpacity style={[styles.card, styles.addCard, { width: cardSize, height: cardSize }]}>
               <View style={styles.addIconWrapper}>
                 <Add size={32} color="#d3baa377" />
               </View>
             </TouchableOpacity>
 
-            {/* Zone Cards */}
-            {filtered.map((zone) => (
-              <TouchableOpacity
+         {filtered.map((zone) => (
+  <TouchableOpacity
     key={zone.id}
-    style={[cards.allCard, { width: cardSize, height: cardSize }]}
+    style={[cards.allCard, { width: cardSize, height: cardSize, padding:12, justifyContent: 'space-between' }]}
     onPress={() => router.push({ pathname: "/zone-detail", params: { id: zone.id } })}
   >
-                <Text
-                  style={[
-                    typography.body,
-                    {
-                      textAlign: "center",
-                      fontWeight: "bold",
-                      color: "#595512",
-                    },
-                  ]}
-                >
-                  {zone.name}
-                </Text>
-                <Text
-                  style={[
-                    typography.body,
-                    {
-                      textAlign: "center",
-                      fontWeight: "600",
-                      color: "#9A9982",
-                    },
-                  ]}
-                >
-                  {zone.plant}
-                </Text>
-                <Image
-                  source={zone.image}
-                  style={styles.plantImage}
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
-            ))}
+    <View>
+      <Text style={[typography.body, { textAlign: "center", fontWeight: "bold", color: "#595512" }]}>
+        {zone.name}
+      </Text>
+      <Text style={[typography.body, { textAlign: "center", fontWeight: "600", color: "#9A9982" }]}>
+        {zone.plant}
+      </Text>
+    </View>
+    <Image source={zone.image} style={[styles.plantImage, { marginTop: 'auto' }]} resizeMode="contain" />
+  </TouchableOpacity>
+))}
           </View>
         </ScrollView>
       </View>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -195,5 +143,6 @@ const styles = StyleSheet.create({
   plantImage: {
     width: "100%",
     flex: 1,
+    height: undefined,
   },
 });

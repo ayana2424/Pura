@@ -1,5 +1,6 @@
 import GradientBackground from "@/components/GradientBackground";
 import NavBar from "@/components/NavBar";
+import { WeatherProvider } from "@/components/weatherContext";
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
@@ -32,30 +33,31 @@ export default function RootLayout() {
   const hideNavBar = ['/', '/logo', '/login', '/signup', '/onboard'].includes(pathname);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <View style={{ flex: 1, backgroundColor: '#62C8F5' }}>
-        <GradientBackground>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: 'transparent' },
-            }}
-          >
-            {/* ← only your actual pages, no (tabs) or modal */}
-            <Stack.Screen name="index"       />
-            <Stack.Screen name="logo"        />
-            <Stack.Screen name="login"       />
-            <Stack.Screen name="signup"      />
-            <Stack.Screen name="onboard"     />
-            <Stack.Screen name="home"        />
-            <Stack.Screen name="garden"      />
-            <Stack.Screen name="profile"     />
-            <Stack.Screen name="zone-detail" />
-          </Stack>
-          {!hideNavBar && <NavBar />}
-        </GradientBackground>
-      </View>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <WeatherProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <View style={{ flex: 1, backgroundColor: '#62C8F5' }}>
+          <GradientBackground>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: 'transparent' },
+              }}
+            >
+              <Stack.Screen name="index"       />
+              <Stack.Screen name="logo"        />
+              <Stack.Screen name="login"       />
+              <Stack.Screen name="signup"      />
+              <Stack.Screen name="onboard"     />
+              <Stack.Screen name="home"        />
+              <Stack.Screen name="garden"      />
+              <Stack.Screen name="profile"     />
+              <Stack.Screen name="zone-detail" />
+            </Stack>
+            {!hideNavBar && <NavBar />}
+          </GradientBackground>
+        </View>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </WeatherProvider>
   );
 }

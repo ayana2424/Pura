@@ -1,33 +1,24 @@
 import { homescreenStyles, typography } from '@/components/styles';
-import { getWeather, WeatherType } from '@/components/weather';
+import { getWeather, WeatherData, WeatherType } from '@/components/weather';
 import ZoneCarousel from '@/components/zoneCarousel';
-import { LinearGradient } from 'expo-linear-gradient';
+import GradientBackground from '@/components/GradientBackground';
 import { Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-const weatherGradients: Record<WeatherType, readonly [string, string, string]> = {
-  sunny:   ['#61BDFB', '#E5F4FF', '#BACC72'],
-  rain:    ['#2C3E6B', '#3D5A8A', '#1a2a4a'],
-  snow:    ['#B8D4E8', '#D6E8F5', '#E8F4FB'],
-  thunder: ['#1a1a2e', '#2d2d4e', '#0f0f1e'],
-  cloudy:  ['#6B7FA8', '#8A9BBF', '#4a5a7a'],
-  mist:    ['#8BA5B8', '#A8BEC8', '#6B8EA8'],
-  default: ['#61BDFB', '#E5F4FF', '#BACC72'],
-};
 
 export default function Home() {
-  const [weatherType, setWeatherType] = useState<WeatherType>('default');
+  const [weather, setWeather] = useState<WeatherData | null>(null);
 
   useEffect(() => {
-    getWeather().then(data => setWeatherType(data.weatherType));
+    getWeather().then(setWeather);
   }, []);
 
+  const weatherType = weather?.weatherType ?? 'default';
+  const temp = weather?.temp;
+
   return (
-    <LinearGradient
-      colors={weatherGradients[weatherType]}
-      style={{ flex: 1 }}
-    >
+  <GradientBackground >
       <Stack.Screen options={{ headerShown: false }} />
       <ScrollView
         contentContainerStyle={homescreenStyles.scroll}
@@ -47,10 +38,25 @@ export default function Home() {
               })}
             </Text>
           </View>
+          <View
+          style={{
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}>
+            <Text style={[typography.heading4, { color: '#fff' }]}>
+              {temp}°C
+            </Text>
+          </View>
         </View>
 
         <ZoneCarousel />
       </ScrollView>
-    </LinearGradient>
+    </GradientBackground>
   );
 }
