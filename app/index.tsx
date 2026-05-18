@@ -1,85 +1,158 @@
-import { typography } from '@/components/styles';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect } from 'react';
-import { router, Stack } from 'expo-router';
-import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
+import { useEffect, useRef } from 'react';
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  Image,
+  StyleSheet,
+  View,
+} from 'react-native';
 
+const { height: H } = Dimensions.get('window');
 
-export default function Index() {
-  
-
+export default function Logo() {
   const [fontsLoaded] = useFonts({
-  'Afacad-Regular': require('../assets/Fonts/Afacad-Regular.ttf'),
-  // 'NataSans-Bold': require('../assets/Fonts/NataSans-Bold.ttf'),
-  // 'NataSans-SemiBold': require('../assets/Fonts/NataSans-SemiBold.ttf'),  
-  
-});
+    'NataSans-SemiBold': require('../assets/Fonts/NataSans-SemiBold.ttf'),
+  });
+
+  const dropY       = useRef(new Animated.Value(0)).current;
+  const dropScale   = useRef(new Animated.Value(1)).current;
+  const dropOpacity = useRef(new Animated.Value(1)).current;
+  const textOpacity = useRef(new Animated.Value(1)).current;
+
   useEffect(() => {
-  const timer = setTimeout(() => {
-    router.replace('/login');
-  }, 5000);
+    if (!fontsLoaded) return;
 
-  return () => clearTimeout(timer);
-}, []);
+    Animated.sequence([
 
-if (!fontsLoaded) return null; 
+      // show logo + text for 1.2 seconds
+      Animated.delay(1200),
+
+      // text fades out
+      Animated.timing(textOpacity, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+
+      Animated.delay(200),
+
+      // bounce 1 — up then down
+      Animated.sequence([
+        Animated.timing(dropY, {
+          toValue: -50,
+          duration: 200,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(dropY, {
+          toValue: 0,
+          duration: 250,
+          easing: Easing.bounce,
+          useNativeDriver: true,
+        }),
+      ]),
+
+      // bounce 2 — smaller
+      Animated.sequence([
+        Animated.timing(dropY, {
+          toValue: -25,
+          duration: 160,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(dropY, {
+          toValue: 0,
+          duration: 200,
+          easing: Easing.bounce,
+          useNativeDriver: true,
+        }),
+      ]),
+
+      Animated.delay(100),
+
+      // drop goes down and off screen
+      Animated.parallel([
+        Animated.timing(dropY, {
+          toValue: H,
+          duration: 600,
+          easing: Easing.in(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(dropOpacity, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+
+    ]).start(() => {
+      router.replace('/login');
+    });
+
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) return null;
 
   return (
-   <TouchableOpacity
-   style={{ flex: 1 }}
-   onPress={() => router.push('/login')} //router.replace('/login') to prevent going back to the splash screen
-   activeOpacity={1}>
-
-    <LinearGradient
-      colors={['#61BDFB','#E5F4FF', '#BACC72']} // gradient background colors
-      // start={{ x: 0, y: 0 }}
-      // end={{ x: 1, y: 1 }} // in case if you want to change position of the gradient
-      style={styles.container}
-    >
-            <Stack.Screen options={{ headerShown: false }} />
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#61BDFB', '#E5F4FF', '#BACC72']}
+        style={StyleSheet.absoluteFill}
+      />
 
       <Image
-    source={require('../assets/cloud.png')}
-    style={{ 
-      position: 'absolute',
-      width: '100%', 
-      height: '40%',
-      top: 0,   
-      left: 0,
-      resizeMode: 'cover',
-    }}
-  />
-  <Image
-    source={require('../assets/LOGOBG.png')}
-    style={{ 
-      position: 'absolute',
-      width: 300, 
-      height: 400,
-      // bottom: 50,
-    }}
-  />
-      <Image
-      source={require('../assets/logop.png')}
-      style={{ width: 150, height: 200 }}
-    />
-    
-      <Text style={[typography.heading1, { color: '#439D82' }]}>pura</Text> 
-      
-    </LinearGradient>
-    </TouchableOpacity>
-    
+        source={require('../assets/cloud.png')}
+        style={styles.cloud}
+      />
+
+      <Animated.View style={[styles.logoWrap, {
+        opacity: dropOpacity,
+        transform: [{ translateY: dropY }, { scale: dropScale }],
+      }]}>
+        <Image
+          source={require('../assets/logop.png')}
+          style={styles.logo}
+        />
+        <Animated.Text style={[styles.appName, { opacity: textOpacity }]}>
+          pura
+        </Animated.Text>
+      </Animated.View>
+
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  text: {
+  cloud: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '40%',
+    resizeMode: 'cover',
+  },
+  logoWrap: {
+    alignItems: 'center',
+    gap: 12,
+  },
+  logo: {
+    width: 110,
+    height: 140,
+    resizeMode: 'contain',
+  },
+  appName: {
+    fontSize: 48,
     color: '#439D82',
-    fontSize: 24,
+    fontFamily: 'NataSans-SemiBold',
+    letterSpacing: 2,
   },
 });
