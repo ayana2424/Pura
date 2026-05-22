@@ -1,14 +1,33 @@
-// components/ZoneCarousel.tsx
-
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Image } from "react-native";
 import { useRef, useState } from "react";
-import CircularProgress from "react-native-circular-progress-indicator";
 import { cards, typography } from "@/components/styles";
 
+// TODO: replace with real zone data from your backend/context
 const zones = [
-  { id: '1', name: 'Zone A - Cherry Tomatoes', health: 85, soilMoisture: 85, temperature: 22 },
-  { id: '2', name: 'Zone B - Basil',           health: 70, soilMoisture: 60, temperature: 24 },
-  { id: '3', name: 'Zone C - Lettuce',          health: 90, soilMoisture: 90, temperature: 20 },
+  {
+    id: '1',
+    name: 'Zone A - Cherry Tomatoes',
+    image: require('@/assets/images/roof_placeholder.png'), // swap with your actual image paths
+    lastWatered: '22mins',
+    soilMoisture: '85%',
+    roofCondition: 'Closed',
+  },
+  {
+    id: '2',
+    name: 'Zone B - Basil',
+    image: require('@/assets/images/roof_placeholder.png'),
+    lastWatered: '41mins',
+    soilMoisture: '60%',
+    roofCondition: 'Open',
+  },
+  {
+    id: '3',
+    name: 'Zone C - Lettuce',
+    image: require('@/assets/images/roof_placeholder.png'),
+    lastWatered: '15mins',
+    soilMoisture: '90%',
+    roofCondition: 'Closed',
+  },
 ];
 
 export default function ZoneCarousel() {
@@ -24,8 +43,8 @@ export default function ZoneCarousel() {
 
   return (
     <View
-      style={cards.allCard}
-      onLayout={(e) => setSlideWidth(e.nativeEvent.layout.width - 40)} // subtract horizontal padding
+      style={[cards.allCard, { marginBottom: 12 }]}
+      onLayout={(e) => setSlideWidth(e.nativeEvent.layout.width - 40)}
     >
       <FlatList
         ref={flatListRef}
@@ -38,47 +57,44 @@ export default function ZoneCarousel() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={{ width: slideWidth }}>
+
+            {/* Zone name */}
             <Text style={[typography.heading5, { color: '#595512', marginBottom: 12 }]}>
               {item.name}
             </Text>
 
-            <View style={[cards.flexRow, { gap: 20, alignItems: 'center' }]}>
-              {/* Circle */}
-              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <CircularProgress
-                  value={item.health}
-                  radius={60}
-                  activeStrokeColor={'#5ECFBF'}
-                  inActiveStrokeColor={'#E8EDCF'}
-                  showProgressValue={false}
-                />
-                <Text style={{
-                  position: 'absolute',
-                  fontSize: 28,
-                  fontWeight: '700',
-                  color: '#595512',
-                }}>
-                  {item.health}%
-                </Text>
-              </View>
+            {/* Zone image */}
+            <Image
+              source={item.image}
+              style={{
+                width: '100%',
+                height: 160,
+                resizeMode: 'contain',
+                marginBottom: 16,
+              }}
+            />
 
-              {/* Stats */}
-              <View style={[cards.flexColumn, { gap: 8 }]}>
-                <View>
-                  <Text style={[typography.body, { color: '#9A9982', fontWeight: '600' }]}>Soil Moisture</Text>
-                  <Text style={[typography.heading4, { color: '#595512' }]}>{item.soilMoisture}%</Text>
-                </View>
-                <View>
-                  <Text style={[typography.body, { color: '#9A9982', fontWeight: '600' }]}>Last Watered</Text>
-                  <Text style={[typography.heading4, { color: '#595512' }]}>{item.temperature}mins</Text>
-                </View>
+            {/* Stats — column layout */}
+            <View style={[cards.flexRow, { justifyContent: 'space-between' }]}>
+              <View style={cards.flexColumn}>
+                <Text style={[typography.caption, { color: '#9A9982' }]}>Last Watered</Text>
+                <Text style={[typography.heading5, { color: '#595512' }]}>{item.lastWatered}</Text>
+              </View>
+              <View style={cards.flexColumn}>
+                <Text style={[typography.caption, { color: '#9A9982' }]}>Soil Moisture</Text>
+                <Text style={[typography.heading5, { color: '#595512' }]}>{item.soilMoisture}</Text>
+              </View>
+              <View style={cards.flexColumn}>
+                <Text style={[typography.caption, { color: '#9A9982' }]}>Roof Condition</Text>
+                <Text style={[typography.heading5, { color: '#595512' }]}>{item.roofCondition}</Text>
               </View>
             </View>
+
           </View>
         )}
       />
 
-      {/* Pagination Dots */}
+      {/* Pagination dots */}
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 16 }}>
         {zones.map((_, i) => (
           <View key={i} style={{

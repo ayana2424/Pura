@@ -1,7 +1,5 @@
 import * as Location from 'expo-location';
 
-const API_KEY = '3c781afde8a9e2f003cf8349f9338493'; // openweathermap.org
-
 export type WeatherType = 'rain' | 'snow' | 'sunny' | 'thunder' | 'cloudy' | 'mist' | 'default';
 
 export interface WeatherData {
@@ -13,35 +11,65 @@ export interface WeatherData {
   wind: string;
 }
 
-function getWeatherType(main: string): WeatherType {
-  const m = main.toLowerCase();
-  if (m.includes('rain') || m.includes('drizzle')) return 'rain';
-  if (m.includes('thunder'))                        return 'thunder';
-  if (m.includes('snow'))                           return 'snow';
-  if (m.includes('cloud'))                          return 'cloudy';
-  if (m.includes('mist') || m.includes('fog'))      return 'mist';
-  if (m.includes('clear'))                          return 'sunny';
+// Open-Meteo WMO weather code → WeatherType
+function getWeatherType(code: number): WeatherType {
+  if ([95, 96, 99].includes(code))              return 'thunder';
+  if (code >= 71 && code <= 77)                 return 'snow';
+  if (code >= 51 && code <= 67)                 return 'rain';
+  if (code >= 80 && code <= 82)                 return 'rain';
+  if ([45, 48].includes(code))                  return 'mist';
+  if (code >= 2 && code <= 3)                   return 'cloudy';
+  if (code === 0 || code === 1)                 return 'sunny';
   return 'default';
+}
+
+function getDescription(code: number): string {
+  const descriptions: Record<number, string> = {
+    0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
+    45: 'Fog', 48: 'Icy fog',
+    51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle',
+    61: 'Light rain', 63: 'Rain', 65: 'Heavy rain',
+    71: 'Light snow', 73: 'Snow', 75: 'Heavy snow',
+    80: 'Showers', 81: 'Rain showers', 82: 'Violent showers',
+    95: 'Thunderstorm', 96: 'Thunderstorm with hail', 99: 'Heavy thunderstorm',
+  };
+  return descriptions[code] ?? 'Unknown';
 }
 
 export async function getWeather(): Promise<WeatherData> {
   const { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== 'granted') {
-    return { city: 'Unknown', temp: '--', description: '', weatherType: 'default', humidity: '--', wind: '--' };
+
+  let lat = 25.0330;
+  let lon = 121.5654;
+
+  if (status === 'granted') {
+   const location = await Location.getCurrentPositionAsync({});
+   lat = location.coords.latitude;
+   lon = location.coords.longitude;
   }
 
-  const loc  = await Location.getCurrentPositionAsync({});
-  const res  = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${API_KEY}&units=metric`
-  );
-  const data = await res.json();
+  // Reverse geocode for city name
+  let city = 'Unknown';
+  try {
+    const [place] = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lon });
+    city = place?.city ?? place?.region ?? 'Unknown';
+  } catch (_) {}
 
+  const res = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code` +
+    `&timezone=auto`
+  );
+const data = await res.json();
+  const current = data.current;
+  console.log('coords used:', lat, lon);
+  console.log('open-meteo response:', JSON.stringify(current));
   return {
-    city:        data.name,
-    temp:        Math.round(data.main.temp).toString(),
-    description: data.weather[0].description,
-    weatherType: getWeatherType(data.weather[0].main),
-    humidity:    data.main.humidity.toString(),
-    wind:        Math.round(data.wind.speed).toString(),
+    city,
+    temp:        Math.round(current.temperature_2m).toString(),
+    description: getDescription(current.weather_code),
+    weatherType: getWeatherType(current.weather_code),
+    humidity:    current.relative_humidity_2m.toString(),
+    wind:        Math.round(current.wind_speed_10m).toString(),
   };
 }

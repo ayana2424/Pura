@@ -1,14 +1,15 @@
 // components/NavBar.tsx
 
 import { usePathname, useRouter } from "expo-router";
-import { AddSquare, Home, Profile, Tree } from "iconsax-react-native";
+import { AddSquare, Home, Note1, Profile2User,Setting2, Tree } from "iconsax-react-native";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 const tabs = [
   { name: 'home',    icon: Home   },
   { name: 'garden',  icon: Tree    },
-  { name: 'add',     icon: AddSquare },
-  { name: 'profile', icon: Profile },
+  { name: 'info',     icon: Note1 },
+  { name: 'community', icon: Profile2User },
+  { name: 'profile', icon: Setting2 },
 ] as const;
 
 export default function NavBar() {

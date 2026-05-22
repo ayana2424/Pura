@@ -2,6 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ReactNode } from 'react';
 import { StyleProp, View, ViewStyle } from "react-native";
 import { useWeather } from "@/components/weatherContext";
+import WeatherAnimation from '@/components/weatherAnimation';
 
 const weatherGradients = {
   sunny:   ['#61BDFB', '#E5F4FF', '#BACC72'],
@@ -25,9 +26,10 @@ export default function GradientBackground({ children, style }: Props) {
     <View style={{ flex: 1 }}>
       <LinearGradient
         colors={weatherGradients[weatherType]}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', }}
       />
       <View style={[{ flex: 1 }, style]}>
+        <WeatherAnimation weatherType={weatherType} />
         {children}
       </View>
     </View>
