@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
@@ -89,8 +90,13 @@ export default function Logo() {
         }),
       ]),
 
-    ]).start(() => {
-      router.replace('/login');
+    ]).start(async () => {
+  const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
+  if (isLoggedIn === 'true') {
+    router.replace('/home');  // ← already logged in
+  } else {
+    router.replace('/login'); // ← not logged in
+  }
     });
 
   }, [fontsLoaded]);

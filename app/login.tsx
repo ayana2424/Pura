@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, Stack } from 'expo-router';
@@ -119,8 +120,14 @@ export default function Login() {
                 !canLogin && styles.loginButtonDisabled,
                 pressed && canLogin && styles.loginButtonPressed,
               ]}
-              onPress={() => router.push('/onboard')}
-              disabled={!canLogin}
+              onPress={async () => {
+    await AsyncStorage.setItem('isLoggedIn', 'true');
+    await AsyncStorage.setItem('username', username);
+    const saved = await AsyncStorage.getItem('isLoggedIn');
+  console.log('✅ isLoggedIn saved:', saved); // ← add this
+    router.replace('/onboard'); // replace with replace so can't go back
+  }}
+  disabled={!canLogin}
             >
               <Text style={[styles.loginButtonText, { fontFamily: 'NataSans-SemiBold' }]}>
                 Login

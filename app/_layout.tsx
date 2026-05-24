@@ -1,5 +1,6 @@
 import GradientBackground from "@/components/GradientBackground";
 import NavBar from "@/components/NavBar";
+import { WeatherProvider } from '@/components/weatherContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
@@ -9,7 +10,6 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View } from "react-native";
 import 'react-native-reanimated';
-import { WeatherProvider } from '@/components/weatherContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,7 +45,6 @@ export default function RootLayout() {
               }}
             >
               <Stack.Screen name="index"       />
-              <Stack.Screen name="logo"        />
               <Stack.Screen name="login"       />
               <Stack.Screen name="signup"      />
               <Stack.Screen name="onboard"     />
@@ -53,6 +52,7 @@ export default function RootLayout() {
               <Stack.Screen name="garden"      />
               <Stack.Screen name="profile"     />
               <Stack.Screen name="zone-detail" />
+              <Stack.Screen name="plant-chat" options={{ headerShown: false }} />
             </Stack>
             {!hideNavBar && <NavBar />}
           </GradientBackground>

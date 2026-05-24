@@ -1,15 +1,17 @@
-import { LinearGradient } from "expo-linear-gradient";
+import GradientBackground from '@/components/GradientBackground';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
+
 
 type SettingRowProps = {
   label: string;
@@ -47,15 +49,23 @@ export default function Profile() {
   const [waterReminders, setWaterReminders] = useState(true);
   const [darkMode, setDarkMode]             = useState(false);
 
-  function handleLogout() {
-    Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
-      { text: "Logout", style: "destructive", onPress: () => router.replace("/login") },
-    ]);
-  }
+  async function handleLogout() {
+  Alert.alert("Logout", "Are you sure?", [
+    { text: "Cancel", style: "cancel" },
+    {
+      text: "Logout",
+      style: "destructive",
+      onPress: async () => {
+        await AsyncStorage.removeItem('isLoggedIn'); // ← clear saved login
+        await AsyncStorage.removeItem('username');
+        router.replace('/login');
+      }
+    }
+  ]);
+}
 
   return (
-    <LinearGradient colors={["#61BDFB", "#E5F4FF", "#BACC72"]} style={styles.gradient}>
+    <GradientBackground>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* ── Avatar ── */}
@@ -119,7 +129,7 @@ export default function Profile() {
         <Text style={styles.version}>Pura v1.0.0</Text>
 
       </ScrollView>
-    </LinearGradient>
+     </GradientBackground>
   );
 }
 
