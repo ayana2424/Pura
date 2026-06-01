@@ -73,7 +73,7 @@ export default function Profile() {
           <View style={styles.avatar}>
             <Text style={styles.avatarEmoji}>🌱</Text>
           </View>
-          <Text style={styles.name}>Aiana</Text>
+          <Text style={styles.name}>User111</Text>
           <Text style={styles.email}>aiana@email.com</Text>
 
           <TouchableOpacity style={styles.editBtn}>

@@ -1,5 +1,4 @@
 // app/garden.tsx
-import GradientBackground from "@/components/GradientBackground";
 import { cards, typography } from "@/components/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useRouter } from "expo-router";
@@ -17,10 +16,10 @@ import {
 } from "react-native";
 
 const zones = [
-  { id: "1", name: "Zone A", plant: "Yellow Cosmos", image: require("../assets/images/yellowCosmos.png") },
-  { id: "2", name: "Zone B", plant: "French Marigolds",  image: require("../assets/images/frenchMarigolds.png") },
-  { id: "3", name: "Zone C", plant: "Dwarf Sunflowers", image: require("../assets/images/dwarfSun.png") },
-  { id: "4", name: "Zone D", plant: "Violas",   image: require("../assets/images/violas.png") },
+  { id: "1", name: "Zone A", plant: "Yellow Cosmos", image: require("../assets/images/yellowcos.png") },
+  { id: "2", name: "Zone B", plant: "French Marigolds",  image: require("../assets/images/frenchmarigold.png") },
+  { id: "3", name: "Zone C", plant: "Dwarf Sunflowers", image: require("../assets/images/dwarfsunf.png") },
+  { id: "4", name: "Zone D", plant: "Violas",   image: require("../assets/images/violaa.png") },
 ];
 
 export default function Garden() {

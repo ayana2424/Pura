@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { Heart, InfoCircle, Message, MessageText1, People, SearchNormal1, Send2 } from 'iconsax-react-native';
 import { useState } from 'react';
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -114,10 +115,22 @@ export default function Community() {
         </View>
 
         {/* ── Featured carousel ── */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.featuredWrap}>
-  {[1, 2, 3].map(i => (
+        {/* ── Featured carousel ── */}
+<ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.featuredWrap}>
+  {[
+    { img: require('../assets/seat.png'),        title: 'Garden Tips' },
+    { img: require('../assets/PeopleGar.png'),   title: 'Community' },
+    { img: require('../assets/nichehobbie.png'), title: 'Grow Together' },
+  ].map((item, i) => (
     <TouchableOpacity key={i} style={styles.featuredCard}>
-      
+      <Image
+        source={item.img}
+        style={styles.featuredImg}
+        resizeMode="cover"
+      />
+      <View style={styles.featuredOverlay}>
+        <Text style={styles.featuredTitle}>{item.title}</Text>
+      </View>
     </TouchableOpacity>
   ))}
 </ScrollView>
@@ -267,16 +280,7 @@ const styles = StyleSheet.create({
 
   // featured
   featuredWrap: { marginBottom: 16 },
-  featuredTitle:   { fontSize: 13, fontFamily: 'NataSans-SemiBold', color: '#595512', textAlign: 'center' },
   featuredMembers: { fontSize: 11, fontFamily: 'NataSans-Regular', color: 'rgba(89,85,18,0.6)' },
-
-  featuredCard: {
-  width: 350,
-  height: 200,
-  borderRadius: 20,
-  marginRight: 12,
-  backgroundColor: 'rgba(255,251,251,0.88)', // ← white frosted
-},
 
   // tabs
   tabs:        { flexDirection: 'row', gap: 8, marginBottom: 14 },
@@ -284,6 +288,33 @@ const styles = StyleSheet.create({
   tabActive:   { backgroundColor: '#56D5CA', borderColor: '#56D5CA' },
   tabText:     { fontSize: 13, fontFamily: 'NataSans-Medium', color: '#595512' },
   tabTextActive: { color: '#FFFEF1' },
+
+  featuredCard: {
+  width: 160,
+  height: 110,
+  borderRadius: 16,
+  marginRight: 10,
+  overflow: 'hidden', // ← makes image stay inside rounded corners
+},
+featuredImg: {
+  width: '100%',
+  height: '100%',
+},
+featuredOverlay: {
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  padding: 8,
+  backgroundColor: 'rgba(0,0,0,0.3)',
+  borderBottomLeftRadius: 16,
+  borderBottomRightRadius: 16,
+},
+featuredTitle: {
+  fontSize: 13,
+  fontFamily: 'NataSans-SemiBold',
+  color: '#FFFEF1',
+},
 
   // posts
   postCard:    { backgroundColor: 'rgba(255,251,251,0.88)', borderRadius: 20, padding: 14, marginBottom: 10 },
