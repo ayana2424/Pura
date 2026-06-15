@@ -1,28 +1,27 @@
 #include <Stepper.h>
-#include <WiFi.h>
-#include <HTTPClient.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
 #include "secrets.h"          
 
 const int RELAY_PIN = 5;       
-const int SOIL_PIN = 34;       
+const int SOIL_PIN = A0;       
 const int stepsPerRevolution = 2048; 
 
-// motors are mapped as IN1, IN3, IN2, IN4
-// motor 1
-Stepper roofMotor1(stepsPerRevolution, 19, 5, 18, 17);
+// motors are mapped as IN1, IN3, IN2, IN4 bcs of the stepper library
+// motor 1 
+Stepper roofMotor1(stepsPerRevolution, 14, 13, 12, 15);
 
 // motor 2 (not connected yet)
-// Stepper roofMotor2(stepsPerRevolution, 21, 23, 22, 16);
+// Stepper roofMotor2(stepsPerRevolution, 0, 2, 4, 16);
 
 // global var
 bool isRaining = false;
 bool roofIsOpen = true;        
 unsigned long previousMillis = 0;
+unsigned long previousWeatherMillis = 0;
 const long interval = 10000;   
-
-// FreeRTOS task handler
-TaskHandle_t WeatherTask;
-TaskHandle_t HardwareTask;
+const long weatherInterval = 300000; // 5 minutes
 
 void setup() {
   Serial.begin(9600);
@@ -45,10 +44,6 @@ void setup() {
     Serial.print(".");
   }
   Serial.println("\nWiFi Connected!");
-
-  // tasks for cores
-  xTaskCreatePinnedToCore(WeatherAPICheck, "WeatherTask", 10000, NULL, 1, &WeatherTask, 0);
-  xTaskCreatePinnedToCore(HardwareControl, "HardwareTask", 10000, NULL, 1, &HardwareTask, 1);
 }
 
 // soil sensor logic
@@ -89,41 +84,33 @@ void moveRoofs(bool closeRoof) {
   }
 }
 
-// CORE 0
 // network & API
-void WeatherAPICheck(void * parameter) {
-  for(;;) { 
-    if(WiFi.status() == WL_CONNECTED) {
-      HTTPClient http;
+void WeatherAPICheck() {
+  if(WiFi.status() == WL_CONNECTED) {
+    WiFiClient client;
+    HTTPClient http;
+  
+    String url = "http://api.weatherapi.com/v1/current.json?key=" + String(WEATHER_API_KEY) + "&q=Taipei";
     
-      String url = "http://api.weatherapi.com/v1/current.json?key=" + String(SECRET_WEATHER_API_KEY) + "&q=Taipei";
-      
-      http.begin(url); 
-      int httpCode = http.GET();
+    http.begin(client, url); 
+    int httpCode = http.GET();
 
-      if (httpCode > 0) {
-        String payload = http.getString();
-        
-        if (payload.indexOf("rain") > 0) {
-          isRaining = true;
-        } else {
-          isRaining = false;
-        }
+    if (httpCode > 0) {
+      String payload = http.getString();
+      
+      if (payload.indexOf("rain") > 0) {
+        isRaining = true;
+      } else {
+        isRaining = false;
       }
-      http.end();
     }
-    
-    // check the API every 5 minutes (300,000 ms)
-    vTaskDelay(300000 / portTICK_PERIOD_MS); 
+    http.end();
   }
 }
 
-// CORE 1
 // hardware
-void HardwareControl(void * parameter) {
-  for(;;) { 
-    
-    // manual roof operation watch trigger
+void HardwareControl() {
+  // manual roof operation watch trigger
     if (Serial.available() > 0) {
       char user_input = Serial.read();
       if (user_input == 'm' || user_input == 'M') {
@@ -160,9 +147,19 @@ void HardwareControl(void * parameter) {
           water_the_plant(3);
       } 
     }
-    
-    vTaskDelay(10 / portTICK_PERIOD_MS); 
-  }
 }
 
-void loop() {}
+void loop() {
+  unsigned long currentMillis = millis();
+  
+  // weather check logic (runs every 5 minutes / 300,000 ms)
+  if (currentMillis - previousWeatherMillis >= weatherInterval) {
+    previousWeatherMillis = currentMillis;
+    WeatherAPICheck();
+  }
+
+  // hardware control logic (runs every loop)
+  HardwareControl();
+  
+  yield(); // important for ESP8266 to protect against watchdog resets
+}
