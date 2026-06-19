@@ -121,7 +121,7 @@ export default function Signup() {
                   style={styles.eyeButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <Text style={styles.eyeText}>{showPassword ? '🙈' : '👁️'}</Text>
+                  <Text style={styles.eyeText}>{showPassword}</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -152,7 +152,8 @@ export default function Signup() {
                   style={styles.eyeButton}
                   onPress={() => setShowConfirm(!showConfirm)}
                 >
-                  <Text style={styles.eyeText}>{showConfirm ? '🙈' : '👁️'}</Text>
+                <Text style={styles.eyeText}>{showConfirm}</Text>
+                  
                 </TouchableOpacity>
               )}
             </View>

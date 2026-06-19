@@ -125,7 +125,7 @@ export default function Login() {
     await AsyncStorage.setItem('username', username);
     const saved = await AsyncStorage.getItem('isLoggedIn');
   console.log('✅ isLoggedIn saved:', saved); // ← add this
-    router.replace('/onboard'); // replace with replace so can't go back
+    router.replace('/home'); // replace with replace so can't go back
   }}
   disabled={!canLogin}
             >
