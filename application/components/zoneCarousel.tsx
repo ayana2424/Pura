@@ -1,13 +1,13 @@
-import { View, Text, FlatList, Image } from "react-native";
-import { useRef, useState } from "react";
 import { cards, typography } from "@/components/styles";
+import { useRef, useState } from "react";
+import { FlatList, Image, Text, View } from "react-native";
 
 // TODO: replace with real zone data from your backend/context
 const zones = [
   {
     id: '1',
     name: 'Zone A - Cherry Tomatoes',
-    image: require('@/assets/images/roof_placeholder.png'), // swap with your actual image paths
+    image: require('@/assets/images/pura_mockup.png'), // swap with your actual image paths
     lastWatered: '22mins',
     soilMoisture: '85%',
     roofCondition: 'Closed',
@@ -15,7 +15,7 @@ const zones = [
   {
     id: '2',
     name: 'Zone B - Basil',
-    image: require('@/assets/images/roof_placeholder.png'),
+    image: require('@/assets/images/pura_mockup.png'),
     lastWatered: '41mins',
     soilMoisture: '60%',
     roofCondition: 'Open',
@@ -23,7 +23,7 @@ const zones = [
   {
     id: '3',
     name: 'Zone C - Lettuce',
-    image: require('@/assets/images/roof_placeholder.png'),
+    image: require('@/assets/images/pura_mockup.png'),
     lastWatered: '15mins',
     soilMoisture: '90%',
     roofCondition: 'Closed',
@@ -68,7 +68,7 @@ export default function ZoneCarousel() {
               source={item.image}
               style={{
                 width: '100%',
-                height: 160,
+                height: 250,
                 resizeMode: 'contain',
                 marginBottom: 16,
               }}

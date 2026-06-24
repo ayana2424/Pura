@@ -1,5 +1,6 @@
 import GradientBackground from '@/components/GradientBackground';
 import { typography } from '@/components/styles';
+import { BlurView } from "expo-blur";
 import { router } from 'expo-router';
 import { Heart, InfoCircle, Message, MessageText1, People, SearchNormal1, Send2 } from 'iconsax-react-native';
 import { useState } from 'react';
@@ -72,7 +73,8 @@ export default function Community() {
   const [activeTab, setActiveTab]   = useState('Feed');
   const [likedPosts, setLikedPosts] = useState<string[]>(['1']);
   const [joined, setJoined]         = useState<string[]>([]);
-
+  const [activeIndex, setActiveIndex] = useState(0);
+ 
   function toggleLike(id: string) {
     setLikedPosts(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]);
   }
@@ -116,20 +118,75 @@ export default function Community() {
 
         {/* ── Featured carousel ── */}
         {/* ── Featured carousel ── */}
-<ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.featuredWrap}>
+{/* ── Featured carousel ── */}
+<ScrollView
+  horizontal
+  pagingEnabled
+  showsHorizontalScrollIndicator={false}
+  onScroll={(e) => {
+    const index = Math.round(
+      e.nativeEvent.contentOffset.x / 294
+    );
+    setActiveIndex(index);
+  }}
+  scrollEventThrottle={16}
+  style={styles.featuredWrap}
+>
   {[
-    { img: require('../assets/seat.png'),        title: 'Garden Tips' },
-    { img: require('../assets/PeopleGar.png'),   title: 'Community' },
-    { img: require('../assets/nichehobbie.png'), title: 'Grow Together' },
+    {
+      img: require('../assets/images/gt.png'),
+      title: 'Join Fair Haven community',
+      sub: 'Plant your trees together during the 2026 Earth day',
+    },
+    {
+      img: require('../assets/images/growt.png'),
+      title: 'Garden Tips Community',
+      sub: 'Learn from expert gardeners around the world',
+    },
+    {
+      img: require('../assets/images/gt.png'),
+      title: 'Grow Together',
+      sub: 'Share your garden journey with others',
+    },
   ].map((item, i) => (
-    <TouchableOpacity key={i} style={styles.featuredCard}>
-      <Image
-        source={item.img}
-        style={styles.featuredImg}
-        resizeMode="cover"
-      />
-      <View style={styles.featuredOverlay}>
-        <Text style={styles.featuredTitle}>{item.title}</Text>
+    <TouchableOpacity
+      key={i}
+      style={[
+        styles.featuredCard,
+        {
+          opacity: activeIndex === i ? 1 : 0.75,
+          transform: [
+            {
+              scale: activeIndex === i ? 1 : 0.92,
+            },
+          ],
+        },
+      ]}
+    >
+      <View style={styles.imageContainer}>
+        <Image
+          source={item.img}
+          style={styles.featuredImg}
+          resizeMode="cover"
+        />
+
+        {activeIndex !== i && (
+          <BlurView
+            intensity={40}
+            tint="light"
+            style={StyleSheet.absoluteFillObject}
+          />
+        )}
+      </View>
+
+      <View style={styles.featuredTextWrap}>
+        <Text style={styles.featuredTitle}>
+          {item.title}
+        </Text>
+
+        <Text style={styles.featuredSub}>
+          {item.sub}
+        </Text>
       </View>
     </TouchableOpacity>
   ))}
@@ -269,8 +326,8 @@ const styles = StyleSheet.create({
 
   // header
   header:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  title:    { fontSize: 26, fontFamily: 'NataSans-SemiBold', color: '#595512' },
-  subtitle: { fontSize: 12, fontFamily: 'NataSans-Regular', color: 'rgba(89,85,18,0.7)', marginTop: 3, maxWidth: '85%' },
+  title:    { fontSize: 26, fontFamily: 'NataSans-SemiBold', color: '#fff' },
+  subtitle: { fontSize: 12, fontFamily: 'NataSans-Regular', color: '#fff', marginTop: 3, maxWidth: '85%' },
   chatBtn:  { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,251,251,0.88)', alignItems: 'center', justifyContent: 'center' },
 
   // search
@@ -289,31 +346,45 @@ const styles = StyleSheet.create({
   tabText:     { fontSize: 13, fontFamily: 'NataSans-Medium', color: '#595512' },
   tabTextActive: { color: '#FFFEF1' },
 
-  featuredCard: {
-  width: 160,
-  height: 110,
-  borderRadius: 16,
-  marginRight: 10,
-  overflow: 'hidden', // ← makes image stay inside rounded corners
+ featuredCard: {
+  width: 360,
+  backgroundColor: 'rgba(255,251,251,0.92)',
+  borderRadius: 20,
+  marginRight: 14,
+  overflow: 'hidden',
+  elevation: 5,
 },
+
 featuredImg: {
   width: '100%',
-  height: '100%',
+  height: '100%',         // ← tall image
 },
-featuredOverlay: {
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: 8,
-  backgroundColor: 'rgba(0,0,0,0.3)',
-  borderBottomLeftRadius: 16,
-  borderBottomRightRadius: 16,
+
+featuredTextWrap: {
+  padding: 14,
+  alignItems: 'center', // ← text centered
 },
+
 featuredTitle: {
-  fontSize: 13,
+  fontSize: 16,
   fontFamily: 'NataSans-SemiBold',
-  color: '#FFFEF1',
+  color: '#127B85',
+  textAlign: 'center',
+  marginBottom: 4,
+},
+imageContainer: {
+  width: '100%',
+  height: 200,
+  borderRadius: 18,
+  overflow: 'hidden',
+},
+
+featuredSub: {
+  fontSize: 12,
+  fontFamily: 'NataSans-Regular',
+  color: '#9a9060',
+  textAlign: 'center',
+  lineHeight: 18,
 },
 
   // posts

@@ -16,10 +16,10 @@ import {
 } from "react-native";
 
 const zones = [
-  { id: "1", name: "Zone A", plant: "Yellow Cosmos", image: require("../assets/images/yellowcos.png") },
-  { id: "2", name: "Zone B", plant: "French Marigolds",  image: require("../assets/images/frenchmarigold.png") },
-  { id: "3", name: "Zone C", plant: "Dwarf Sunflowers", image: require("../assets/images/dwarfsunf.png") },
-  { id: "4", name: "Zone D", plant: "Violas",   image: require("../assets/images/violaa.png") },
+  { id: "1", name: "Zone A", plant: "Tomato", image: require("../assets/images/tomatoes.png") },
+  { id: "2", name: "Zone B", plant: "French Marigolds",  image: require("../assets/images/flowers.png") },
+  { id: "3", name: "Zone C", plant: "Bok Choy", image: require("../assets/images/bokChoy.png") },
+  { id: "4", name: "Zone D", plant: "Violas",   image: require("../assets/images/viola.png") },
 ];
 
 export default function Garden() {
